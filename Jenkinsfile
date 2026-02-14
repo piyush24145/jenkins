@@ -1,7 +1,18 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "my-node-app"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+    }
+
     stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('Install Dependencies') {
             steps {
@@ -9,11 +20,32 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
+        stage('Run Tests') {
             steps {
-                bat 'docker build -t my-node-app .'
+                bat 'npm test'
             }
         }
 
+        stage('Docker Build') {
+            steps {
+                bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
+            }
+        }
+
+        stage('Docker Images List') {
+            steps {
+                bat 'docker images'
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "✅ Build Successful - Docker Image Created"
+        }
+        failure {
+            echo "❌ Build Failed - Check Logs"
+        }
     }
 }
