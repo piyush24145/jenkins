@@ -16,25 +16,25 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'npm test'
+                bat 'npm test'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+                bat "docker build -t %IMAGE_NAME%:%IMAGE_TAG% ."
             }
         }
 
         stage('Docker Images List') {
             steps {
-                sh 'docker images'
+                bat 'docker images'
             }
         }
 
@@ -42,10 +42,10 @@ pipeline {
 
     post {
         success {
-            echo "Build Successful - Docker Image Created"
+            echo "✅ Build Successful - Docker Image Created"
         }
         failure {
-            echo "Build Failed - Check Logs"
+            echo "❌ Build Failed - Check Logs"
         }
     }
 }
